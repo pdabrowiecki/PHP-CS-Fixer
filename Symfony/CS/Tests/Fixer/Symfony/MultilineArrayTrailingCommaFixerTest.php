@@ -62,65 +62,85 @@ class MultilineArrayTrailingCommaFixerTest extends AbstractFixerTestBase
             array("<?php \$x = array(\n<<<'EOT'\noet\nEOT\n);"),
             array(
                 '<?php
-
-                $foo = array(
-                    array(
-                    ),
-                );',
+    $foo = array(
+        array(
+        ),
+    );',
+            ),
+            array(
+                '<?php
+    $a = array(
+        1 => array(
+            2 => 3,
+        ),
+    );',
+                '<?php
+    $a = array(
+        1 => array(
+            2 => 3
+        )
+    );',
             ),
             array(
                 "<?php
-                \$x = array(
+    \$x = array(
+        'foo',
+        'bar',
+        array(
+            'foo',
+            'bar',
+            array(
+                'foo',
+                'bar',
+                array(
                     'foo',
-                    'bar',
+                    ('bar' ? true : !false),
+                    ('bar' ? array(true) : !(false)),
                     array(
                         'foo',
                         'bar',
                         array(
                             'foo',
-                            'bar',
-                            array(
-                                'foo',
-                                ('bar' ? true : !false),
-                                ('bar' ? array(true) : !(false)),
-                                array(
-                                    'foo',
-                                    'bar',
-                                    array(
-                                        'foo',
-                                        ('bar'),
-                                    ),
-                                ),
-                            ),
+                            ('bar'),
                         ),
                     ),
-                );",
+                ),
+            ),
+        ),
+    );",
                 "<?php
-                \$x = array(
+    \$x = array(
+        'foo',
+        'bar',
+        array(
+            'foo',
+            'bar',
+            array(
+                'foo',
+                'bar',
+                array(
                     'foo',
-                    'bar',
+                    ('bar' ? true : !false),
+                    ('bar' ? array(true) : !(false)),
                     array(
                         'foo',
                         'bar',
                         array(
                             'foo',
-                            'bar',
-                            array(
-                                'foo',
-                                ('bar' ? true : !false),
-                                ('bar' ? array(true) : !(false)),
-                                array(
-                                    'foo',
-                                    'bar',
-                                    array(
-                                        'foo',
-                                        ('bar'),
-                                    )
-                                )
-                            )
+                            ('bar'),
                         )
                     )
-                );",
+                )
+            )
+        )
+    );",
+            ),
+            array(
+                '<?php
+
+                $a = array("foo" => function ($b) {
+                    return "bar".$b;
+                });',
             ),
 
             // short syntax tests
@@ -136,51 +156,55 @@ class MultilineArrayTrailingCommaFixerTest extends AbstractFixerTestBase
             array("<?php \$x = [\n /* He */ \n];"),
             array(
                 '<?php
+    $foo = [
+        [
+        ],
+    ];',
+            ),
+            array(
+                '<?php
 
-                $foo = [
-                    [
-                    ],
-                ];',
+                $a = ["foo" => function ($b) {
+                    return "bar".$b;
+                }];',
             ),
 
             // no array tests
             array(
                 "<?php
-
-                throw new BadMethodCallException(
-                    sprintf(
-                        'Method \"%s\" not implemented',
-                        __METHOD__
-                    )
-                );",
+    throw new BadMethodCallException(
+        sprintf(
+            'Method \"%s\" not implemented',
+            __METHOD__
+        )
+    );",
+            ),
+            array(
+                "<?php
+    throw new BadMethodCallException(sprintf(
+        'Method \"%s\" not implemented',
+        __METHOD__
+    ));",
             ),
             array(
                 "<?php
 
-                throw new BadMethodCallException(sprintf(
-                    'Method \"%s\" not implemented',
-                    __METHOD__
-                ));",
-            ),
-            array(
-                "<?php
+    namespace FOS\\RestBundle\\Controller;
 
-                namespace FOS\\RestBundle\\Controller;
-
-                class ExceptionController extends ContainerAware
-                {
-                    public function showAction(Request \$request, \$exception, DebugLoggerInterface \$logger = null, \$format = 'html')
-                    {
-                        if (!\$exception instanceof DebugFlattenException && !\$exception instanceof HttpFlattenException) {
-                            throw new \\InvalidArgumentException(sprintf(
-                                'ExceptionController::showAction can only accept some exceptions (%s, %s), \"%s\" given',
-                                'Symfony\\Component\\HttpKernel\\Exception\\FlattenException',
-                                'Symfony\\Component\\Debug\\Exception\\FlattenException',
-                                get_class(\$exception)
-                            ));
-                        }
-                    }
-                }",
+    class ExceptionController extends ContainerAware
+    {
+        public function showAction(Request \$request, \$exception, DebugLoggerInterface \$logger = null, \$format = 'html')
+        {
+            if (!\$exception instanceof DebugFlattenException && !\$exception instanceof HttpFlattenException) {
+                throw new \\InvalidArgumentException(sprintf(
+                    'ExceptionController::showAction can only accept some exceptions (%s, %s), \"%s\" given',
+                    'Symfony\\Component\\HttpKernel\\Exception\\FlattenException',
+                    'Symfony\\Component\\Debug\\Exception\\FlattenException',
+                    get_class(\$exception)
+                ));
+            }
+        }
+    }",
             ),
             array(
                 '<?php
